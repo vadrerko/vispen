@@ -52,16 +52,14 @@
   perl << EOSVIM
     VIM::Msg("SQL-perl-vim routines loaded");
 ###
-# version 1.7
+# version 1.8
 
 use strict;
 use utf8;
 use List::Util();
-use Path::Class();
 use Time::HiRes();
 use POSIX();
 use Text::Template();
-use Encode ('decode');
 
 
 my $tell_method=1; sub set_tell_method{$tell_method=shift}
@@ -107,7 +105,7 @@ sub _untemplate {
     my $fn0 = $fn=~/^(.*)\.in$/i ? $1 : "$fn.untempl";
     $pre //= '';
 
-    #my $s = Path::Class::file($fn)->slurp(iomode=>'<:raw')  =~
+    require Path::Class;
     my $s = Path::Class::file($fn)->slurp(iomode=>'<:encoding(UTF-8)')  =~
 	s/\{:(\w+)\}/\$VAR='$1';\$VAR_$1 = <<'_EOS_$1';\n/gr   =~
 	s/\{\/(\w+)\}/\n_EOS_$1\n/gr               =~
@@ -231,7 +229,6 @@ sub execute_here {
     my ($row,$col) = $::curwin->Cursor;
     my $row0=$row;
 
-    #my $cmd = decode(utf8=>$::curbuf->Get($row));
     my $cmd = $::curbuf->Get($row);
 
     if ($cmd =~ m/^([?c]?)( *)$/) {
@@ -244,21 +241,25 @@ sub execute_here {
 # or on a line containing only 'c' to get config which you could edit
 EOS
 	} elsif ($1 eq 'c') {
+            my $e = '';
 	    $row = __append($row, <<"EOS");
-\$vim::untemplatep  = $vim::untemplatep; # perform in-memory untemplate of lines before cursor?
-\$vim::width        = $vim::width;  # table width
-\$vim::anchorp      = $vim::anchorp; # add anchor with elapsed time after each request
-\$vim::title_rows   = $vim::title_rows; # max number of rows in table title
-\$vim::ignore_cols  = '$vim::ignore_cols'; # columns to ignore, coma separated list
-\$vim::html_save_to = '$vim::html_save_to'; # file name where HTML output is to be saved
+$e\$vim::untemplatep  = $vim::untemplatep; # perform in-memory untemplate of lines before cursor?
+$e\$vim::width        = $vim::width;  # table width
+$e\$vim::anchorp      = $vim::anchorp; # add anchor with elapsed time after each request
+$e\$vim::title_rows   = $vim::title_rows; # max number of rows in table title
+$e\$vim::ignore_cols  = '$vim::ignore_cols'; # columns to ignore, coma separated list
+$e\$vim::html_save_to = '$vim::html_save_to'; # file name where HTML output is to be saved
 EOS
 	} else {
 	    $row = __append($row, $vim::initial_lines || <<'EOS');
 {{{ # vi: syn=perl
-$reset = 'undef $dbh';
+# here perl code executed each time on executionn for 'untemplate' phase - but
+# if $vim::untemplatep glag is ON
 unless ($dbh) {
     use DBI;
+    # next line will store into $::dbh, because untemplating is no strict,
     $dbh = DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
+    #... whereas single-line F7 exec is strict, as well as =perl/=Cut, etc., but =PERL/=Cut is again no-strict.
 }
 ''
 }}}\
@@ -269,6 +270,8 @@ undef $::dbh
 VIM::Msg('abcd','Comment')
 VIM::Msg('efgh','ErrorMsg')
 
+use DBI; $::dbh = DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
+
 # config:
 $vim::untemplatep = 0
 $vim::width = 123;
@@ -277,12 +280,25 @@ $vim::width = 123;
 select 1 as n
 =cut
 
-=sql
-select 1
-union all select {{{2+3}}}
+select "a" a,"b" as b union all select 'Peter','{{{"a"x1000}}}'
+
+below is 'crazy'-generated SQL:
+=Sql g/f=+
+{{{join " union all\n", map {"select 'value $_' as v,".++$::cnt } 'a'..'rz'}}}
 =Cut
 
-select "a" a,"b" as b union all select 'Вася','{{{"a"x1000}}}'
+=Sql
+WITH RECURSIVE generate_series(value) AS (
+    SELECT 1 
+    UNION ALL 
+    SELECT value + 1 FROM generate_series WHERE value < 100
+)
+SELECT value FROM generate_series
+=Cut
+
+=perl
+use Data::Dumper; Dumper \%::r
+=Cut
 EOS
             VIM::DoCommand("set syn=perl");
 	}
@@ -408,14 +424,13 @@ EOS
                       : $cmd=~/^---#(.*)$/ ? $1 : 
                         Text::Template::fill_in_string($cmd, ENCODING=>'UTF8',DELIMITERS=>['{{{','}}}']);
     my $cmd1_sav = $cmd1;
-    #$cmd1 = decode('utf8',my $cmd1_sav = $cmd1) unless $perluntemplate;
 
     my $precmd1 = $sqlname =~ /^#/ ? "$::sqlcnt. ":'';
 
     # now put several lines prefixing these with ||
     if ($jira_syntax) {
         my $x10=$x1;
-        $::curbuf->Append($x1++, "{code:sql}");
+        $::curbuf->Append($x1++, "{code:sql|borderColor=#00DD00}");
         for(split(/\n/,$precmd1.$cmd1)){$::curbuf->Append($x1++, $_);}
         $::curbuf->Append($x1++, "{code}");
         VIM::DoCommand("normal ${x10}Gjzf".($x1-$x10-1)."jzok");
@@ -429,7 +444,7 @@ EOS
     my $dbh = $ifsql1 ? $::dbh1 : $::dbh;
     my $res='';
     if ($ifperl) {
-        $res = ($perlshowcode ? "{code:perl}\n".($cmd1=~s/^.*?###.*?(?:\n|\Z)//grm=~s/^\{code[^{}]*\} *\n//grm=~s/\n+$//r)."\n{code}\n{code:none}\n": '') .
+        $res = ($perlshowcode ? "{code:perl|borderColor=#0000DD}\n".($cmd1=~s/^.*?###.*?(?:\n|\Z)//grm=~s/^\{code[^{}]*\} *\n//grm=~s/\n+$//r)."\n{code}\n{code:none}\n": '') .
             (eval ''.($perlnostrict ? "no strict;" : "") . $cmd1) .
             ($perlshowcode ? "{code}\n": '');
         if ($@) {$res.="ERROR: [$@]\n"}
@@ -441,7 +456,8 @@ EOS
         my $fe_cmd=$1;
         if ($sqlname eq '' and $cmd1=~/^select\s*\/\*([\w\-!\/\=+]+)\*\//i) {$sqlname=$1}
         my $format = ($jira_syntax || $fe_cmd eq 'Select' || $fe_cmd eq 'Show') ? 'j'
-            : $fe_cmd eq 'sElect' ? 'T' : $fe_cmd eq 'seLect' ? 't' : $fe_cmd eq 'selEct' ? 'h' : '+';
+            : $fe_cmd eq 'sElect' ? 'T' : $fe_cmd eq 'seLect' ? 't' : $fe_cmd eq 'selEct' ? 'h'
+            : $fe_cmd eq 'seleCt' ? 'x' : '+';
         if ($sqlname =~ s/\/f=([\w+\-])$//) {$format=$1}
         my $fv = {
                 h=>["<table><tr><th>",'</th><th>','</th></tr>','<tr><td valign="top">','</td><td valign="top">','</td></tr>',"</table>\n"],
@@ -456,12 +472,9 @@ EOS
         for my $cmd2 (@cmd2) {
             my $sth = $dbh->prepare($cmd2) or die "can't prepare [$cmd2]: " . $dbh->errstr();
             $sth->execute() or die "can't execute [$cmd2]: " . $sth->errstr();
-            my @names = map {decode('utf8',$_)} @{$sth->{NAME} || []};
+            my @names = @{$sth->{NAME} || []};
             my $aref = ($dbh->errstr?[]:$sth->fetchall_arrayref()) or die "can't fetchall [$cmd2]: " . $sth->errstr();
             __vypcol(\@names,$aref) if $vim::ignore_cols;
-            for (@$aref) {
-                utf8::decode($_)  for (@$_); # WTF
-            }
             if ($format eq '+') {
 		# TODO: use Term::Table
                 my @w = map {

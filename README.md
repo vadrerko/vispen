@@ -17,14 +17,44 @@ Contents
 Intro
 -----
 
-vispen is a plugin for [Vim][], providing support for quick execution
-of SQL which could be enriched with perl code.
+`vispen` (Vim Session Pen) is a lightweight, zero-overhead Literate Programming environment and interactive SQL client built directly into Vim, written entirely in Perl. 
 
-Mostly this could be considered as SQL client, which has tight integration with
-Perl, and also this could be considered as improved REPL functionality for Perl
-(read-eval-print-loop).
+Unlike heavy alternatives (like Emacs Org-mode or Jupyter), `vispen` uses Vim's built-in **`+perl`** interpreter. It keeps your database connections and variables persistent in the editor's memory — **with absolutely no external servers, background processes, or network sockets.**
 
-TODO demo
+
+## 🚀 Quick Demo
+
+[![asciicast](https://asciinema.org/a/bVRMwGnUATW2gt5c)](https://asciinema.org/a/bVRMwGnUATW2gt5c)
+
+*In this demo: Writing dynamic SQL with inline Perl templates, executing it instantly, and rendering results directly into auto-folding Jira markup and ASCII tables.*
+
+It can be used as a command shell:
+[![asciicast](https://asciinema.org/a/KErAxIe10dpvcFlr)](https://asciinema.org/a/KErAxIe10dpvcFlr)
+
+## ✨ Key Features
+
+*   **Zero-Socket Architecture:** State and variables persist inside Vim's native `+perl` memory space. No flaky ports, no zombie backend servers.
+*   **Polyglot Literate Programming:** Mix documentation, Jira markup, raw Perl logic (`=Perl / =Cut`), and SQL queries (`=sql / =Cut`) in a single `.sess.in` file.
+*   **Smart Template Evaluation:** Use `{{{ ... }}}` interpolation via `Text::Template` directly inside your SQL statements.
+*   **Multiple Output Formats:** Render query results on the fly as ASCII tables, HTML, `summary` (row count only), or **ready-to-paste Jira markup** (`||3||str||`).
+*   **Out-of-the-box Folding:** Results and code blocks automatically group into clean, native Vim folds (`|-`) to keep your screen clutter-free.
+*   **Persistent Database Clients:** Define your `$::dbh` once via DBI, and seamlessly query MariaDB, Oracle, PostgreSQL, or any other enterprise DB.
+
+---
+
+## 💡 Why vispen? (The Philosophy)
+
+Most modern notebook environments suffer from the "hidden state" problem or require complex infrastructure. `vispen` embraces the Unix philosophy:
+1. It uses what's already inside your editor (`+perl`).
+2. It treats files as plain text (`.sess.in` is completely Git-friendly, unlike `.ipynb` JSON bloat).
+3. It automates tedious corporate workflows (generating tables and code snippets explicitly formatted for Jira/Confluence).
+
+---
+
+## 📄 License
+
+MIT / Same as Vim.
+
 
 Installation
 ------------
@@ -34,33 +64,24 @@ Installation
 | Runtime | Version | Perl   |
 |---------|---------|--------|
 | Vim     | 8.0     | 5.006  |
-| Neovim  | 0.5.0   | 5.006  |
+| Neovim  | NOT supported (yet) | - |
 
 #### Supported Vim Versions
 
-Our policy is to support the Vim version that's in the latest LTS of Ubuntu.
-That's currently Ubuntu 22.04 which contains `vim-nox` at `v8.2.3995`.
-
 Vim must have a [working Perl5](#supported-perl-runtime).
-
-For Neovim users, our policy is to require the latest released version.
-Currently, Neovim 0.5.0 is required.  Please note that some features are not
-available in Neovim, and Neovim is not officially supported.
 
 #### Supported Perl runtime
 
 Vim must be compiled with perl. You can check if this is working with 
 `:perl use Text::Template; print $Text::Template::VERSION`. It should say something like `1.59`.
 
-Two modules are required:
+The `Text::Template` modules is required, you can either install it from CPAN or another preferred way.
+`Path::Class` needed if you will use 'untemplate' macrocommand, otherwise it is not necessary.
 
-* Text::Template
-* Term::Table
+`cpan i Text::Template`
+`cpan i Path::Class`
 
-`cpan i Text::Template Term::Table`
-
-For Neovim, you must have a perl 5 runtime and the Neovim perl
-extensions. See Neovim's `:help provider-perl` for how to set that up.
+For SQL functionality, you need proper DBD module, for our minimal cale `DBD::SQLite`. 
 
 ## copy plugin itself
 
@@ -89,6 +110,9 @@ For Ubuntu:
 
 ```
 apt install vim-nox libtext-template-perl
+apt install libpath-class-perl
+apt install libdbi-perl
+apt install libdbd-sqlite3-perl
 ```
 
 ### Windows
