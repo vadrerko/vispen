@@ -199,6 +199,18 @@ the block.
 
 Interpretation of these block listed below.
 
+### quick summary of =xxx/=Cut
+
+||Block Tag ||Meaning ||untemplating ||Output Format ||notes ||
+|=sql |Any SQL (including DDL) | yes | jira | `$::dbh` |
+|=sqL |Any SQL (including DDL) | yes | ascii | `$::dbh` |
+|=sQl |Any SQL (including DDL) | yes | jira | `$::dbh1` |
+|=sQL |Any SQL (including DDL) | yes | ascii | `$::dbh1` |
+|=Perl |Perl code | no | jira | also outputs {code:perl}/{code} for JIRA |
+|=perl |Perl code | no | jira | |
+|=pErl |Perl code | yes | jira | untemplating perl code itself? Are you serious? |
+|=PERL |Perl code | no | jira | no-strict mode |
+
 #### `=sql/=Cut` block
 
 means general sql query
@@ -369,6 +381,47 @@ Untemplating in single-line SQL, single-line perl and `=sql/=Cut` block performe
 regardless of this option.
 
 Default: `1`
+
+
+### Note about variables and strict/non-strict modes.
+
+If you're here, you're decent perler. This means that following paragraphs is a breeze for you.
+Just to confirm understanding, here is a summary.
+
+When you execute block in non-strict mode, undeclared variable are created for you in main package
+(or in specified package, if you specified it)
+
+Untemplated blocks `{{{...}}}` are in non-strict-mode, (of-course you can add `use strict at the
+beginning of the block but often you don't)
+
+```perl
+=PERL
+$dbh = DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
+$dbh=...;
+=cut
+```
+
+is identical to 
+```perl
+=perl
+$::dbh=DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
+=Cut
+
+and your working database handler will be changed from now on, so subsequent SQL requests will be based on this freshly created handler.
+
+Following is an error because of undeclared variable:
+```perl
+=perl
+$dbh=DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
+=Cut
+```
+
+Following is not an error but `$::dbh` remain unchanged, and newly created `$dbh` will be destroyed upos scope exit:
+```perl
+=perl
+my $dbh=DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
+=Cut
+```
 
 
 ### Best practices
