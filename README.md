@@ -199,18 +199,18 @@ the block.
 
 Interpretation of these block listed below.
 
-### quick summary of =xxx/=Cut
+### 📑 Active Block Matrix
 
-| Block Tag | Meaning | untemplating | Output Format | notes |
-| :--- | :--- | :--- | :--- | :--- |
-| `=sql` | Any SQL (including DDL) | yes | jira | `$::dbh` |
-| `=sqL` | Any SQL (including DDL) | yes | ascii | `$::dbh` |
-| `=sQl` | Any SQL (including DDL) | yes | jira | `$::dbh1` |
-| `=sQL` | Any SQL (including DDL) | yes | ascii | `$::dbh1` |
-| `=Perl` | Perl code | no | jira | also outputs {code:perl}/{code} for JIRA |
-| `=perl` | Perl code | no | as-is | |
-| `=pErl` | Perl code | yes | jira | untemplating perl code itself? Are you serious? |
-| `=PERL` | Perl code | no | as-is | no-strict mode |
+| Block Tag | Meaning | Untemplating? | Output Format | Database / Context | Notes |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `=sql` | Any SQL (including DDL) | **Yes** | Jira | `$::dbh` | Standard Jira query |
+| `=sqL` | Any SQL (including DDL) | **Yes** | ASCII | `$::dbh` | Quick visual check |
+| `=sQl` | Any SQL (including DDL) | **Yes** | Jira | `$::dbh1` | Alternative DB |
+| `=sQL` | Any SQL (including DDL) | **Yes** | ASCII | `$::dbh1` | Alternative DB, ASCII |
+| `=Perl` | Perl code | No | Jira | Strict mode | Wraps in `{code:perl}` for Jira |
+| `=perl` | Perl code | No | Jira | Strict mode | Standard evaluation |
+| `=pErl` | Perl code | **Yes** | Jira | Strict mode | *Untemplating Perl itself? Serious?* 🤯 |
+| `=PERL` | Perl code | No | Jira | **No-strict mode** | For quick-and-dirty hacks |
 
 #### `=sql/=Cut` block
 
