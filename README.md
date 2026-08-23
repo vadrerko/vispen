@@ -160,7 +160,7 @@ Main action (`F9`) is for SQL execution, secondary action (`F7`) is for Perl exe
 
 After "action"  key is pressed, in case when `$vim::untemplatep` is true,
 then all lines before the current line are untemplated with the `tt_untemplate` function.
-However these lines keep unchanged, so only side-effect makes sence. This could
+However these lines keep unchanged, so only side-effect makes sense. This could
 be useful to initialize `$::dbh` or `$::dbh1` variables.
 
 For the secondary action, current line is executed as perl code, after that result of this
@@ -358,23 +358,23 @@ Default: `1`
 
 ### Best practices
 
-#### simple DOs and DONts
+#### simple DOs and DON'Ts
 
-* Name your extensions as `some.name.some.extension.in`, after untemplating `.in` will be thrown away and you will be happy to have untemplated text in another tab named `some.name.some.extension`.
-* Save before "untemplate" - untemplating reads from disk
-* untemplating throws away anything between `=ignore_everywhere/=cut` and `=ie/=cut` - this is why all other sections are finished with upcased `=Cut`, so you can hide many =Perl/=Cut etc sections inside single `=ie/=cut`.
-* Do not use empty lines inside =Sql/=Cut =Perl/=Cut etc
-* All lines after `=Cut` will be deleted until empty line, so do not place important text there or it will be lost.
-* Avoid excessive complexity. Be perlish but not too perlish - have some 5% pythonista.
-* Ping me if there is something difficult (e.g. by placing issue in repo).
+* **File Naming:** Name your templates as `some.name.ext.in`. After untemplating, the `.in` suffix will be stripped, leaving you with a clean, untemplated file named `some.name.ext` in a new tab.
+* **Save Before Untemplating:** Always save your changes before running the `untemplate` command, as it reads directly from the disk.
+* **Hiding Sections:** The untemplating process discards everything between `=ignore_everywhere/=cut` and `=ie/=cut`. This is why active sections use the uppercase `=Cut` — it allows you to hide multiple `=Perl/=Cut` or `=sql/=Cut` blocks inside a single `=ie/=cut` zone.
+* **No Empty Lines:** Avoid placing completely empty lines inside active blocks like `=Sql/=Cut` or `=Perl/=Cut`.
+* **Data Loss Warning:** All lines after `=Cut` will be automatically deleted until the first empty line is encountered. Do not place any important text there.
+* **Keep It Simple:** Avoid excessive complexity. Be perlish, but not too perlish — keep about 5% of a pythonista mindset.
+* **Feedback:** If you run into any difficulties, please let me know by opening an issue in the repository.
 
 
-#### Perl state
+#### Perl State Management
 
-It is useful to debug perl functions executing `=perl/=Cut` blocks. However after
-some module was `use`-d, it will not be reused on second execution, so any changes in said
-module will not be seen. It is possible overscome this difficulty by deleting proper slot from `%INC` hash.
-However better technique would be to use following approach:
+When debugging custom Perl functions by executing `=perl/=Cut` blocks, remember that once a module is loaded via `use`, Vim's persistent memory will not reload it on subsequent executions. Changes made to the module file on disk will not take effect.
+
+You can overcome this by manually deleting the corresponding slot from the `%INC` hash. However, a much cleaner and more effective approach is to execute the code in an external Perl process like this:
+
 
 ```perl
 =Perl
@@ -389,14 +389,14 @@ EOS
 =Cut
 ```
 
-This is what I came to after several years of usage, appears to be simple and effective, just
-do not use apostrophes `'` inside `$prog` or escape those right .
+*Note: Avoid using unescaped quotes inside the `$prog` string that match your external execution wrapper.*
 
-Displaying funciton coverage and also tracing funciton execution also could be easily achieved.
+This approach also makes it possible to display function coverage and trace function execution directly from your Vim session.
 
-#### issue commands as in 2nd demo
+#### Issuing Commands
 
-WIP: description
+*Section under development. Check the 2nd demo video for visual examples.*
+
 
 ## 📄 License
 
