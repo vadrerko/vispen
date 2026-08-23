@@ -92,22 +92,14 @@ to some key in `$HOME/_vimrc` or `$VIMHOME/_vimrc` file:
 
 ```viml
 map <F6> :source c:\VimScripts\vim-perl-sql.vim<bar>
-	\source c:\VimScripts\vim-perl-sql-bindings.vim<CR>
+	\source c:\VimScripts\vim-perl-sql-cfg.vim<CR>
 ```
 
-...and `vim-perl-sql-bindings.vim` having these bindings:
+...and `vim-perl-sql-cfg.vim` having these bindings:
 ```viml
 map <F7> <Esc>:perl execute_here(5)<CR>
 map <F8> <Esc>:perl tt_untemplate()<CR>
 map <F9> <Esc>:perl execute_here()<CR>
-```
-
-vispen comes with sane defaults for its options, however you probably will want
-to override your initial template, etc.
-So you could create your config file and include it into the chain too:
-
-```viml
-map <F11> :source c:\VimScripts\vim-perl-sql.vim<bar>:source c:\VimScripts\vim-perl-cfg.vim<CR>
 ```
 
 You may take the one from the repository and edit it as you see fit.
