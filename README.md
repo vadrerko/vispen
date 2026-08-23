@@ -40,7 +40,10 @@ It can be used as a powered command shell:
 *   **Out-of-the-box Folding:** Results and code blocks automatically group into clean, native Vim folds (`|-`) to keep your screen clutter-free.
 *   **Persistent Database Clients:** Define your `$::dbh` once via DBI, and seamlessly query MariaDB, Oracle, PostgreSQL, or any other enterprise DB.
 
----
+## Quick Feature Summary
+
+* perl-execution of current line or =Perl/=Cut block
+* SQL-execution of current line or =SQL/=Cut block
 
 ## 💡 Why vispen? (The Philosophy)
 
@@ -49,11 +52,9 @@ Most modern notebook environments suffer from the "hidden state" problem or requ
 2. It treats files as plain text (`.sess.in` is completely Git-friendly, unlike `.ipynb` JSON bloat).
 3. It automates tedious corporate workflows (generating tables and code snippets explicitly formatted for Jira/Confluence).
 
----
+User Guide
+----------
 
-## 📄 License
-
-MIT / Same as Vim.
 
 
 Installation
@@ -130,14 +131,21 @@ Here are the links for your convenience:
 - [Daily updated installers of 32-bit and 64-bit Vim with Perl support][vim-win-download].
 - [Perl][perl-win-download]. Be sure to pick the matching version by 1. number and 2. 32/64 arch.
 
-Quick Feature Summary
------
 
-* perl-execution of current line or =Perl/=Cut block
-* SQL-execution of current line or =SQL/=Cut block
+### ⚙️ Customization
 
-User Guide
-----------
+By default, `vispen` binds functions to `<F7>`, `<F8>`, and `<F9>`. If these keys conflict with your existing setup, you can disable the defaults and map your own preferred keys (e.g., using your `<Leader>` key):
+
+```vim
+" Disable default F-key mappings
+let g:vispen_no_mappings = 1
+
+" Map vispen functions to custom shortcuts
+nmap <Leader>ve <Plug>(VispenExecuteHere)
+nmap <Leader>vp <Plug>(VispenExecuteParam)
+nmap <Leader>vu <Plug>(VispenUntemplate)
+```
+
 
 ### General Usage
 
@@ -345,6 +353,12 @@ Untemplating in single-line SQL, single-line perl and `=sql/=Cut` block performe
 regardless of this option.
 
 Default: `1`
+
+
+## 📄 License
+
+MIT / Same as Vim.
+
 
 [vundle]: https://github.com/VundleVim/Vundle.vim#about
 [vimrc]: https://vimhelp.appspot.com/starting.txt.html#vimrc

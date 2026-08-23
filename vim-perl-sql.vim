@@ -1,4 +1,4 @@
-" VIM Perl and SQL support  \t<F6>
+" Vispen: Polyglot Literate Programming for Vim and Perl
 " . <<'###'; # vim:syntax=perl
 
 " VIM script file; heavily uses Perl, so VIM must be with +perl; see :ver
@@ -7,6 +7,34 @@
 " - use Term::Table for sql formatting in tables
 " - syntax for =sql/=cut, =perl/cut
 " - when text is selected, execute selected text and show it in echo/VIM::Msg
+
+" ============================================================================
+
+" 1. Guard against environments without Perl support
+" This prevents Vim from crashing if the user's Vim binary lacks +perl
+if !has('perl')
+    echohl WarningMsg
+    echomsg "Vispen: Plugin requires Vim to be compiled with +perl support."
+    echohl None
+    finish
+endif
+
+" 2. Define safe global <Plug> interfaces
+" <silent> prevents internal commands from spamming the Vim status bar.
+" <C-u> clears any accidental visual mode counts before running the command.
+noremap <silent> <Plug>(VispenExecuteParam) :<C-u>perl execute_here(5)<CR>
+noremap <silent> <Plug>(VispenUntemplate)   :<C-u>perl tt_untemplate()<CR>
+noremap <silent> <Plug>(VispenExecuteHere)   :<C-u>perl execute_here()<CR>
+
+" 3. Apply default keybindings unless explicitly disabled by the user
+" Users can disable these defaults by adding `let g:vispen_no_mappings = 1` to their .vimrc
+if !exists('g:vispen_no_mappings')
+    " <unique> triggers a gentle warning instead of overriding if F-keys are already busy
+    silent! map <unique> <F7> <Plug>(VispenExecuteParam)
+    silent! map <unique> <F8> <Plug>(VispenUntemplate)
+    silent! map <unique> <F9> <Plug>(VispenExecuteHere)
+endif
+
 
   amenu Perl&5.-sep2-  :<CR>
   amenu Perl&5.&config.$vim::anchorp.0	:perl $vim::anchorp=0<CR>
