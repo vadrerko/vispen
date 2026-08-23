@@ -407,6 +407,7 @@ is identical to
 =perl
 $::dbh=DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
 =Cut
+```
 
 and your working database handler will be changed from now on, so subsequent SQL requests will be based on this freshly created handler.
 
