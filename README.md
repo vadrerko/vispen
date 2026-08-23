@@ -84,11 +84,11 @@ The `Text::Template` modules is required, you can either install it from CPAN or
 
 For SQL functionality, you need proper DBD module, for our minimal case `DBD::SQLite`. 
 
-## copy plugin itself and tune your keys for the `<F7>` and `<F9>` actions.
+## copy plugin and configure bindings
 
 Copy vispen plugin file to some folder from where you will activate it.
-Below is an example to bind  and map it
-to some key in `$HOME/_vimrc` or `$VIMHOME/_vimrc` file:
+Below is an example to map plugin activation and needed actions
+to some keys in some initialization file:
 
 
 ```viml
@@ -240,6 +240,7 @@ hash `%::r` will hold result of the query.
 
 Format is:
 * `+` - ASCII table
+* `-` - only summary, actual output is not shown
 * `h` - HTML table
 * `j` - JIRA syntax
 * `x` - line-by-line format
@@ -354,6 +355,48 @@ regardless of this option.
 
 Default: `1`
 
+
+### Best practices
+
+#### simple DOs and DONts
+
+* Name your extensions as `some.name.some.extension.in`, after untemplating `.in` will be thrown away and you will be happy to have untemplated text in another tab named `some.name.some.extension`.
+* Save before "untemplate" - untemplating reads from disk
+* untemplating throws away anything between `=ignore_everywhere/=cut` and `=ie/=cut` - this is why all other sections are finished with upcased `=Cut`, so you can hide many =Perl/=Cut etc sections inside single `=ie/=cut`.
+* Do not use empty lines inside =Sql/=Cut =Perl/=Cut etc
+* All lines after `=Cut` will be deleted until empty line, so do not place important text there or it will be lost.
+* Avoid excessive complexity. Be perlish but not too perlish - have some 5% pythonista.
+* Ping me if there is something difficult (e.g. by placing issue in repo).
+
+
+#### Perl state
+
+It is useful to debug perl functions executing `=perl/=Cut` blocks. However after
+some module was `use`-d, it will not be reused on second execution, so any changes in said
+module will not be seen. It is possible overscome this difficulty by deleting proper slot from `%INC` hash.
+However better technique would be to use following approach:
+
+```perl
+=Perl
+my $prog = <<'EOS';
+    use strict; 
+    use Data::Dumper;
+    use SomeModuleUnderDevelopment;
+    my @res = some_function();
+    print Dumper(\@res)
+EOS
+` perl -we '$prog' 2>&1 `
+=Cut
+```
+
+This is what I came to after several years of usage, appears to be simple and effective, just
+do not use apostrophes `'` inside `$prog` or escape those right .
+
+Displaying funciton coverage and also tracing funciton execution also could be easily achieved.
+
+#### issue commands as in 2nd demo
+
+WIP: description
 
 ## 📄 License
 
