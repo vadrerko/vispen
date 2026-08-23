@@ -34,20 +34,7 @@
   tmenu Perl&5.execute_here(5) Executes current line as perl
   amenu Perl&5.-sep5-   :<CR>
   amenu Perl&5.delete_this_from_r            :perl delete_this_from_r()<CR>
-  amenu Perl&5.suggest_columns<Tab>Esc-c            :perl suggest_columns()<CR>
-
-  map <F8> <Esc>:perl tt_untemplate()<CR>
-  map <A-y> <Esc>:perl tt_untemplate(1)<CR>
-  map <F9> <Esc>:perl execute_here()<CR>
-  imap <F7> <Esc>:perl execute_here(5)<CR>
-  map <F7> <Esc>:perl execute_here(5)<CR>
-  imap <F9> <Esc>:perl execute_here()<CR>
-  map <S-F9> <Esc>:perl execute_here(1)<CR>
-  imap <S-F9> <Esc>:perl execute_here(1)<CR>
-  map <A-F9> <Esc>:perl execute_here(2)<CR>
-  imap <A-F9> <Esc>:perl execute_here(2)<CR>
-  map <A-c> <Esc>:perl suggest_columns()<CR>
-  map <Esc>c <Esc>:perl suggest_columns()<CR>
+  amenu Perl&5.suggest_columns<Tab>            :perl suggest_columns()<CR>
 
   perl << EOSVIM
     VIM::Msg("SQL-perl-vim routines loaded");

@@ -36,7 +36,7 @@ It can be used as a powered command shell:
 *   **Zero-Socket Architecture:** State and variables persist inside Vim's native `+perl` memory space. No flaky ports, no zombie backend servers.
 *   **Polyglot Literate Programming:** Mix documentation, Jira markup, raw Perl logic (`=Perl / =Cut`), and SQL queries (`=sql / =Cut`) in a single `.sess.in` file.
 *   **Smart Template Evaluation:** Use `{{{ ... }}}` interpolation via `Text::Template` directly inside your SQL statements.
-*   **Multiple Output Formats:** Render query results on the fly as ASCII tables, HTML, `summary` (row count only), or **ready-to-paste Jira markup** (`||3||str||`).
+*   **Multiple Output Formats:** Render query results on the fly as ASCII tables, HTML, `summary` (row count only), or **ready-to-paste Jira markup**.
 *   **Out-of-the-box Folding:** Results and code blocks automatically group into clean, native Vim folds (`|-`) to keep your screen clutter-free.
 *   **Persistent Database Clients:** Define your `$::dbh` once via DBI, and seamlessly query MariaDB, Oracle, PostgreSQL, or any other enterprise DB.
 
@@ -61,10 +61,10 @@ Installation
 
 ### Requirements
 
-| Runtime | Version | Perl   |
-|---------|---------|--------|
-| Vim     | 8.0     | 5.006  |
-| Neovim  | NOT supported (yet) | - |
+| Runtime | Version | Perl |
+| :--- | :--- | :--- |
+| **Vim** | 8.0 | 5.006 |
+| **Neovim** | NOT supported (yet) | - |
 
 #### Supported Vim Versions
 
@@ -81,15 +81,25 @@ The `Text::Template` modules is required, you can either install it from CPAN or
 `cpan i Text::Template`
 `cpan i Path::Class`
 
-For SQL functionality, you need proper DBD module, for our minimal cale `DBD::SQLite`. 
+For SQL functionality, you need proper DBD module, for our minimal case `DBD::SQLite`. 
 
-## copy plugin itself
+## copy plugin itself and tune your keys for the `<F7>` and `<F9>` actions.
 
-Copy vispen plugin file to some folder from where you will activate it and map it
+Copy vispen plugin file to some folder from where you will activate it.
+Below is an example to bind  and map it
 to some key in `$HOME/_vimrc` or `$VIMHOME/_vimrc` file:
 
+
 ```viml
-map <F11> :source c:\VimScripts\vim-perl-sql.vim<CR>
+map <F6> :source c:\VimScripts\vim-perl-sql.vim<bar>
+	\source c:\VimScripts\vim-perl-sql-bindings.vim<CR>
+```
+
+...and `vim-perl-sql-bindings.vim` having these bindings:
+```viml
+map <F7> <Esc>:perl execute_here(5)<CR>
+map <F8> <Esc>:perl tt_untemplate()<CR>
+map <F9> <Esc>:perl execute_here()<CR>
 ```
 
 vispen comes with sane defaults for its options, however you probably will want
@@ -102,7 +112,7 @@ map <F11> :source c:\VimScripts\vim-perl-sql.vim<bar>:source c:\VimScripts\vim-p
 
 You may take the one from the repository and edit it as you see fit.
 
-## inctall Perl and Vim (if not done yet)
+## install Perl and Vim (if not done yet)
 
 ### Linux
 
@@ -114,28 +124,19 @@ apt install libpath-class-perl
 apt install libdbi-perl
 apt install libdbd-sqlite3-perl
 ```
+(Of course `libdbd-sqlite3-perl` only for execution with starter text, you probably already
+have your SQL perl driver :) )
 
 ### Windows
 
-Download [Vim][] from official site, and install corresponding strawberry perl.
+If you build yourself - then you know better :)
+Otherwise download [Vim][] from official site, and install corresponding perl.
+Check `:ver` - seek for occurence of string like following -
+` -DDYNAMIC_PERL -DDYNAMIC_PERL_DLL=\"perl532.dll\" `  - and make sure this perl is available to vim.
 
-Make sure you have a supported Vim version with Perl support. You
-can check the version and which Perl is supported by typing `:version` inside
-Vim. Look at the features included: `+perl/dyn` for Perl.
-Take note of the Vim architecture, i.e. 32 or
-64-bit. It will be important when choosing the Perl installer. We recommend
-using a 64-bit client. [Daily updated installers of 32-bit and 64-bit Vim with
-Perl support][vim-win-download] are available.
-
-Download and install [Perl][perl-win-download]. Be sure to pick the version
-  corresponding to your Vim architecture. It is _Windows x86_ for a 32-bit Vim
-  and _Windows x86-64_ for a 64-bit Vim.
-  Additionally, the version of Perl you install must match up exactly with
-  the version of Perl that Vim is looking for. Type `:version` and look at the
-  bottom of the page at the list of compiler flags. Look for flags that look
-  similar to `-DDYNAMIC_PERL_DLL=\"perl532.dll\"`. This indicates
-  that Vim is looking for Perl 5.32. You'll need one or the other installed,
-  matching the version number exactly.
+Here are the links for your convenience:
+- [Daily updated installers of 32-bit and 64-bit Vim with Perl support][vim-win-download].
+- [Perl][perl-win-download]. Be sure to pick the matching version by 1. number and 2. 32/64 arch.
 
 Quick Feature Summary
 -----
@@ -143,32 +144,29 @@ Quick Feature Summary
 * perl-execution of current line or =Perl/=Cut block
 * SQL-execution of current line or =SQL/=Cut block
 
-Here's a quick demo:
-
-TODO
-
 User Guide
 ----------
 
 ### General Usage
 
-Pressing `F9` on empty line will insert some predefined lines of text, which then
+There is main "action" (my mapping is `F9`) and secondary "action" (I map it to `F7`).
+
+Executing "action" (`F9`) on empty line will insert some predefined lines of text, which then
 could be nicely edited and used for initialisation of the `$::dbh` variable, and also
 some example lines. (those are from `$vim::initial_lines`, change it in your config
 for your purposes)
 
-2 keys are assigned by this plugin - `F7` key and `F9` key. `F7` if for Perl execution,
-`F9` is for SQL execution.
+Main action (`F9`) is for SQL execution, secondary action (`F7`) is for Perl execution,
 
-After the `F7` or `F9` key is pressed, in case when `$vim::untemplatep` is true,
-then all lines before the cuurent line are untemplated with the `tt_untemplate` function.
+After "action"  key is pressed, in case when `$vim::untemplatep` is true,
+then all lines before the current line are untemplated with the `tt_untemplate` function.
 However these lines keep unchanged, so only side-effect makes sence. This could
 be useful to initialize `$::dbh` or `$::dbh1` variables.
 
-For the `F7` key, current line is executed as perl code, after that result of this
+For the secondary action, current line is executed as perl code, after that result of this
 execution will be appended after the current line.
 
-For the `F9` key, following considerations happens:
+For the main action, following considerations happens:
 
 * the plugin checks lines before the current line until it seen whitespace line or
 line starting with `=` or `}` characters.
@@ -247,7 +245,7 @@ Format is:
 * `x` - line-by-line format
 * `o` - outwiker wiki format
 * `O` - verbose outwiker wiki format
-* `t` - coma-separated list prefixed with `--`
+* `t` - comma-separated list prefixed with `--`
 * `T` - tab-separated list prefixed with `--`
 
 
@@ -311,7 +309,7 @@ perl $vim::anchorp = 1
 This option, 'anchor predicate', controls whether `{ancrhor:xxx_time}` will be
 inserted after execution. This could be considered as marker, which then could
 facilitate in searching through your SQL requests. In JIRA reports this marker
-is unvisible.
+is invisible.
 
 Default: `0`
 
@@ -323,13 +321,13 @@ Default: `tab.html`
 
 ### `$vim::ignore_cols`
 
-Columns to skip for SQL requests, coma separated list
+Columns to skip for SQL requests, comma separated list
 
 Default: ``
 
 ### `$vim::initial_lines`
 
-Specifies initial lines which will be inserted on pressing `F9` key on empty line.
+Specifies initial lines which will be inserted on pressing main action key on empty line.
 
 Default: - some few lines of text
 
