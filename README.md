@@ -24,12 +24,12 @@ Unlike heavy alternatives (like Emacs Org-mode or Jupyter), `vispen` uses Vim's 
 
 ## 🚀 Quick Demo
 
-[![asciicast](https://asciinema.org/a/bVRMwGnUATW2gt5c)](https://asciinema.org/a/bVRMwGnUATW2gt5c)
+[![vispen demo](demo/demo2.svg)](https://asciinema.org/a/bVRMwGnUATW2gt5c)
 
 *In this demo: Writing dynamic SQL with inline Perl templates, executing it instantly, and rendering results directly into auto-folding Jira markup and ASCII tables.*
 
-It can be used as a command shell:
-[![asciicast](https://asciinema.org/a/KErAxIe10dpvcFlr)](https://asciinema.org/a/KErAxIe10dpvcFlr)
+It can be used as a powered command shell:
+[![shell replacement demo](demo/demo3.svg)](https://asciinema.org/a/KErAxIe10dpvcFlr)
 
 ## ✨ Key Features
 
