@@ -52,6 +52,21 @@ Most modern notebook environments suffer from the "hidden state" problem or requ
 2. It treats files as plain text (`.sess.in` is completely Git-friendly, unlike `.ipynb` JSON bloat).
 3. It automates tedious corporate workflows (generating tables and code snippets explicitly formatted for Jira/Confluence).
 
+
+## ⏱️ Quick Start (3-Minute Setup)
+
+Don't let the syntax scare you! Here is the absolute minimum setup to execute your first query:
+
+1. **Prerequisite:** Make sure your Vim supports Perl (`:echo has('perl')` should return `1`).
+2. **Install Module:** Run `cpan i Text::Template DBD::SQLite`.
+3. **Load vispen:** Source the main plugin file in your `.vimrc`:
+   ```vim
+   source /path/to/vim-perl-sql.vim
+   nmap <F9> <Esc>:perl execute_here()<CR>
+   ```
+4. **Try it:** Open a new file `test.sess.in`, write `SELECT 1 + 1;` and hit `<F9>`. 
+
+
 User Guide
 ----------
 
@@ -396,6 +411,13 @@ This approach also makes it possible to display function coverage and trace func
 #### Issuing Commands
 
 *Section under development. Check the 2nd demo video for visual examples.*
+
+## 🗺️ Roadmap & Future Plans
+
+- [ ] Complete the documentation for internal macro-commands (`untemplate`, etc.).
+- [ ] Add built-in autocomplete helpers for active blocks.
+- [ ] Investigate Neovim `+perl` compatibility layer/provider limitations.
+- [ ] Create a gallery of production-ready `.sess.in` template examples.
 
 
 ## 📄 License
