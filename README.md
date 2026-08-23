@@ -393,7 +393,7 @@ Untemplated blocks `{{{...}}}` run in non-strict mode by default (of course, you
 
 ```perl
 =PERL
-\$dbh = DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
+$dbh = DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
 =cut
 ```
 
@@ -401,7 +401,7 @@ is identical to:
 
 ```perl
 =perl
-\$::dbh=DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
+$::dbh=DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
 =Cut
 ```
 
@@ -411,7 +411,7 @@ The following will throw an error because of an undeclared variable:
 
 ```perl
 =perl
-\$dbh=DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
+$dbh=DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
 =Cut
 ```
 
@@ -419,7 +419,7 @@ The following is **not** an error, but `$::dbh` remains unchanged, and the newly
 
 ```perl
 =perl
-my \$dbh=DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
+my $dbh=DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
 =Cut
 ```
 
