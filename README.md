@@ -208,9 +208,9 @@ Interpretation of these block listed below.
 | `=sQl` | Any SQL (including DDL) | yes | jira | `$::dbh1` |
 | `=sQL` | Any SQL (including DDL) | yes | ascii | `$::dbh1` |
 | `=Perl` | Perl code | no | jira | also outputs {code:perl}/{code} for JIRA |
-| `=perl` | Perl code | no | jira | |
+| `=perl` | Perl code | no | as-is | |
 | `=pErl` | Perl code | yes | jira | untemplating perl code itself? Are you serious? |
-| `=PERL` | Perl code | no | jira | no-strict mode |
+| `=PERL` | Perl code | no | as-is | no-strict mode |
 
 #### `=sql/=Cut` block
 
