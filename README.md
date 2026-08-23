@@ -201,15 +201,16 @@ Interpretation of these block listed below.
 
 ### quick summary of =xxx/=Cut
 
-||Block Tag ||Meaning ||untemplating ||Output Format ||notes ||
-|=sql |Any SQL (including DDL) | yes | jira | `$::dbh` |
-|=sqL |Any SQL (including DDL) | yes | ascii | `$::dbh` |
-|=sQl |Any SQL (including DDL) | yes | jira | `$::dbh1` |
-|=sQL |Any SQL (including DDL) | yes | ascii | `$::dbh1` |
-|=Perl |Perl code | no | jira | also outputs {code:perl}/{code} for JIRA |
-|=perl |Perl code | no | jira | |
-|=pErl |Perl code | yes | jira | untemplating perl code itself? Are you serious? |
-|=PERL |Perl code | no | jira | no-strict mode |
+| Block Tag | Meaning | untemplating | Output Format | notes |
+| :--- | :--- | :--- | :--- | :--- |
+| `=sql` | Any SQL (including DDL) | yes | jira | `$::dbh` |
+| `=sqL` | Any SQL (including DDL) | yes | ascii | `$::dbh` |
+| `=sQl` | Any SQL (including DDL) | yes | jira | `$::dbh1` |
+| `=sQL` | Any SQL (including DDL) | yes | ascii | `$::dbh1` |
+| `=Perl` | Perl code | no | jira | also outputs {code:perl}/{code} for JIRA |
+| `=perl` | Perl code | no | jira | |
+| `=pErl` | Perl code | yes | jira | untemplating perl code itself? Are you serious? |
+| `=PERL` | Perl code | no | jira | no-strict mode |
 
 #### `=sql/=Cut` block
 
