@@ -383,47 +383,47 @@ regardless of this option.
 
 Default: `1`
 
+### Note about variables and strict/non-strict modes
 
-### Note about variables and strict/non-strict modes.
+If you're here, you're likely an experienced Perl hacker. This means the following paragraphs will be a breeze for you. Just to confirm understanding, here is a quick summary.
 
-If you're here, you're decent perler. This means that following paragraphs is a breeze for you.
-Just to confirm understanding, here is a summary.
+When you execute a block in non-strict mode, undeclared variables are created for you in the `main` package (or in a specific package, if you explicitly defined one).
 
-When you execute block in non-strict mode, undeclared variable are created for you in main package
-(or in specified package, if you specified it)
-
-Untemplated blocks `{{{...}}}` are in non-strict-mode, (of-course you can add `use strict at the
-beginning of the block but often you don't)
+Untemplated blocks `{{{...}}}` run in non-strict mode by default (of course, you can add `use strict;` at the beginning of the block, but often you don't).
 
 ```perl
 =PERL
-$dbh = DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
-$dbh=...;
+\$dbh = DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
 =cut
 ```
 
-is identical to 
+is identical to:
+
 ```perl
 =perl
-$::dbh=DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
+\$::dbh=DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
 =Cut
 ```
 
 and your working database handler will be changed from now on, so subsequent SQL requests will be based on this freshly created handler.
 
-Following is an error because of undeclared variable:
+The following will throw an error because of an undeclared variable:
+
 ```perl
 =perl
-$dbh=DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
+\$dbh=DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
 =Cut
 ```
 
-Following is not an error but `$::dbh` remain unchanged, and newly created `$dbh` will be destroyed upos scope exit:
+The following is **not** an error, but `$::dbh` remains unchanged, and the newly created `$dbh` will be destroyed upon scope exit:
+
 ```perl
 =perl
-my $dbh=DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
+my \$dbh=DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
 =Cut
 ```
+
+
 
 
 ### Best practices
