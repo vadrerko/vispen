@@ -1,0 +1,16 @@
+
+if newvim binding requested - will probably go this way
+
+local ffi = require("ffi")
+local libperl = ffi.load("libperl.so") 
+
+-- Описываем синтаксис C-функций Perl для LuaJIT
+ffi.cdef[[
+    void perl_alloc();
+    void perl_construct(void* my_perl);
+    int perl_parse(void* my_perl, void* xsinit, int argc, char** argv, char** env);
+    int perl_run(void* my_perl);
+]]
+
+-- И запускаем интерпретатор Perl прямо внутри Lua!
+
