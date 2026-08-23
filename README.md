@@ -160,7 +160,7 @@ Main action (`F9`) is for SQL execution, secondary action (`F7`) is for Perl exe
 
 After "action"  key is pressed, in case when `$vim::untemplatep` is true,
 then all lines before the current line are untemplated with the `tt_untemplate` function.
-However these lines keep unchanged, so only side-effect makes sense. This could
+However these lines keep unchanged, so only side-effect makes sence. This could
 be useful to initialize `$::dbh` or `$::dbh1` variables.
 
 For the secondary action, current line is executed as perl code, after that result of this
