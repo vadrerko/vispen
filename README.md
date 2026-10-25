@@ -21,6 +21,7 @@ Intro
 
 Unlike heavy alternatives (like Emacs Org-mode or Jupyter), `vispen` uses Vim's built-in **`+perl`** interpreter. It keeps your database connections and variables persistent in the editor's memory — **with absolutely no external servers, background processes, or network sockets.**
 
+> 💡 **Using a different editor?** Check out [tispen](https://github.com/vadrerko/tispen), a sister project bringing the same workflow to the console editor **tcled**.
 
 ## 🚀 Quick Demo
 
