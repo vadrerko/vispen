@@ -269,7 +269,7 @@ EOS
 	    $row = __append($row, $spen::initial_lines || <<'EOS');
 {{{ # vi: syn=perl
 # here perl code executed each time on executionn for 'untemplate' phase - but
-# if $spen::untemplatep glag is ON
+# if $spen::untemplatep flag is ON
 unless ($dbh) {
     use DBI;
     # next line will store into $::dbh, because untemplating is no strict,
