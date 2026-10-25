@@ -72,7 +72,6 @@ User Guide
 ----------
 
 
-
 Installation
 ------------
 
@@ -169,12 +168,12 @@ There is main "action" (my mapping is `F9`) and secondary "action" (I map it to 
 
 Executing "action" (`F9`) on empty line will insert some predefined lines of text, which then
 could be nicely edited and used for initialisation of the `$::dbh` variable, and also
-some example lines. (those are from `$vim::initial_lines`, change it in your config
+some example lines. (those are from `$spen::initial_lines`, change it in your config
 for your purposes)
 
 Main action (`F9`) is for SQL execution, secondary action (`F7`) is for Perl execution,
 
-After "action"  key is pressed, in case when `$vim::untemplatep` is true,
+After "action"  key is pressed, in case when `$spen::untemplatep` is true,
 then all lines before the current line are untemplated with the `tt_untemplate` function.
 However these lines keep unchanged, so only side-effect makes sence. This could
 be useful to initialize `$::dbh` or `$::dbh1` variables.
@@ -331,10 +330,10 @@ These options can be configured in your [vimrc script][vimrc] by including a
 line like this:
 
 ```perl
-perl $vim::anchorp = 1
+perl $spen::anchorp = 1
 ```
 
-### `$vim::anchorp`
+### `$spen::anchorp`
 
 This option, 'anchor predicate', controls whether `{ancrhor:xxx_time}` will be
 inserted after execution. This could be considered as marker, which then could
@@ -343,37 +342,37 @@ is invisible.
 
 Default: `0`
 
-### `$vim::html_save_to`
+### `$spen::html_save_to`
 
 File name where html will be saved for SQL results in HTML format.
 
 Default: `tab.html`
 
-### `$vim::ignore_cols`
+### `$spen::ignore_cols`
 
 Columns to skip for SQL requests, comma separated list
 
 Default: ``
 
-### `$vim::initial_lines`
+### `$spen::initial_lines`
 
 Specifies initial lines which will be inserted on pressing main action key on empty line.
 
 Default: - some few lines of text
 
-### `$vim::title_rows`
+### `$spen::title_rows`
 
 Specifies max number of rows in table title for SQL results in ASCII format.
 
 Default: `99`
 
-### `$vim::width`
+### `$spen::width`
 
 Specifies width of table for SQL results in ASCII format.
 
 Default: `123`
 
-### `$vim::untemplatep`
+### `$spen::untemplatep`
 
 This option, 'untemplate predicate', controls whether untemplating of lines
 before cursor will be performed before execution of single line or =Perl/=Cut
@@ -480,6 +479,9 @@ This approach also makes it possible to display function coverage and trace func
 
 MIT / Same as Vim.
 
+## Changelog
+
+- 1.81 25.10.2026: config variables now in `spen::` package, not in `vim::`
 
 [vundle]: https://github.com/VundleVim/Vundle.vim#about
 [vimrc]: https://vimhelp.appspot.com/starting.txt.html#vimrc

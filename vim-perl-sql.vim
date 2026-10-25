@@ -37,15 +37,15 @@ endif
 
 
   amenu Perl&5.-sep2-  :<CR>
-  amenu Perl&5.&config.$vim::anchorp.0	:perl $vim::anchorp=0<CR>
-  amenu Perl&5.&config.$vim::anchorp.1	:perl $vim::anchorp=1<CR>
-  amenu Perl&5.&config.$vim::untemplatep.0	:perl $vim::untemplatep=0<CR>
-  amenu Perl&5.&config.$vim::untemplatep.1	:perl $vim::untemplatep=1<CR>
-  amenu Perl&5.&config.$vim::width.123	:perl $vim::width=123<CR>
-  amenu Perl&5.&config.$vim::width.246	:perl $vim::width=246<CR>
-  amenu Perl&5.&config.$vim::title_rows.1	:perl $vim::title_rows=1<CR>
-  amenu Perl&5.&config.$vim::title_rows.10	:perl $vim::title_rows=10<CR>
-  amenu Perl&5.&config.$vim::title_rows.99	:perl $vim::title_rows=99<CR>
+  amenu Perl&5.&config.$spen::anchorp.0	:perl $spen::anchorp=0<CR>
+  amenu Perl&5.&config.$spen::anchorp.1	:perl $spen::anchorp=1<CR>
+  amenu Perl&5.&config.$spen::untemplatep.0	:perl $spen::untemplatep=0<CR>
+  amenu Perl&5.&config.$spen::untemplatep.1	:perl $spen::untemplatep=1<CR>
+  amenu Perl&5.&config.$spen::width.123	:perl $spen::width=123<CR>
+  amenu Perl&5.&config.$spen::width.246	:perl $spen::width=246<CR>
+  amenu Perl&5.&config.$spen::title_rows.1	:perl $spen::title_rows=1<CR>
+  amenu Perl&5.&config.$spen::title_rows.10	:perl $spen::title_rows=10<CR>
+  amenu Perl&5.&config.$spen::title_rows.99	:perl $spen::title_rows=99<CR>
   amenu Perl&5.&config.tell\ method\.\.\..message\ line	:perl set_tell_method(1)<CR>
   amenu Perl&5.&config.tell\ method\.\.\..win32\ msgbox	:perl set_tell_method(2)<CR>
   amenu Perl&5.&config.tell\ method\.\.\..tk\ msgbox	:perl set_tell_method(3)<CR>
@@ -65,9 +65,9 @@ endif
   amenu Perl&5.suggest_columns<Tab>            :perl suggest_columns()<CR>
 
   perl << EOSVIM
-    VIM::Msg("SQL-perl-vim routines loaded");
+$spen::VERSION = '1.81';
+    VIM::Msg("SQL-perl-vim routines version $spen::VERSION loaded");
 ###
-# version 1.8
 
 use strict;
 use utf8;
@@ -208,8 +208,8 @@ sub delete_this_from_r {
 
 sub __vypcol {
     my ($names, $aref) = @_;
-    # remove columns listed in $vim::ignore_cols
-    for my $vypcol (split /,/, $vim::ignore_cols) {
+    # remove columns listed in $spen::ignore_cols
+    for my $vypcol (split /,/, $spen::ignore_cols) {
         my $x = List::Util::first {$names->[$_] eq $vypcol} 0 .. $#$names;
         if (defined $x) {
             splice @$names, $x, 1;
@@ -228,15 +228,15 @@ sub __append {
     return $row;
 }
 
-$vim::width //= 123;
-$vim::respect_title_width //= 0; # TODO NYI - fit title rows
-$vim::title_rows //= 99; # max number of rows in table title
+$spen::width //= 123;
+$spen::respect_title_width //= 0; # TODO NYI - fit title rows
+$spen::title_rows //= 99; # max number of rows in table title
 
-$vim::anchorp //= 0;
-$vim::untemplatep //= 1;
-$vim::ignore_cols //= '';
-$vim::mariadb //= 'MariaDB';
-$vim::html_save_to //= 'tab.html';
+$spen::anchorp //= 0;
+$spen::untemplatep //= 1;
+$spen::ignore_cols //= '';
+$spen::mariadb //= 'MariaDB';
+$spen::html_save_to //= 'tab.html';
 
 sub execute_here {
     my $arg = shift || 0;
@@ -258,18 +258,18 @@ EOS
 	} elsif ($1 eq 'c') {
             my $e = '';
 	    $row = __append($row, <<"EOS");
-$e\$vim::untemplatep  = $vim::untemplatep; # perform in-memory untemplate of lines before cursor?
-$e\$vim::width        = $vim::width;  # table width
-$e\$vim::anchorp      = $vim::anchorp; # add anchor with elapsed time after each request
-$e\$vim::title_rows   = $vim::title_rows; # max number of rows in table title
-$e\$vim::ignore_cols  = '$vim::ignore_cols'; # columns to ignore, coma separated list
-$e\$vim::html_save_to = '$vim::html_save_to'; # file name where HTML output is to be saved
+$e\$spen::untemplatep  = $spen::untemplatep; # perform in-memory untemplate of lines before cursor?
+$e\$spen::width        = $spen::width;  # table width
+$e\$spen::anchorp      = $spen::anchorp; # add anchor with elapsed time after each request
+$e\$spen::title_rows   = $spen::title_rows; # max number of rows in table title
+$e\$spen::ignore_cols  = '$spen::ignore_cols'; # columns to ignore, coma separated list
+$e\$spen::html_save_to = '$spen::html_save_to'; # file name where HTML output is to be saved
 EOS
 	} else {
-	    $row = __append($row, $vim::initial_lines || <<'EOS');
+	    $row = __append($row, $spen::initial_lines || <<'EOS');
 {{{ # vi: syn=perl
 # here perl code executed each time on executionn for 'untemplate' phase - but
-# if $vim::untemplatep glag is ON
+# if $spen::untemplatep glag is ON
 unless ($dbh) {
     use DBI;
     # next line will store into $::dbh, because untemplating is no strict,
@@ -288,8 +288,8 @@ VIM::Msg('efgh','ErrorMsg')
 use DBI; $::dbh = DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
 
 # config:
-$vim::untemplatep = 0
-$vim::width = 123;
+$spen::untemplatep = 0
+$spen::width = 123;
 
 # for <F9> - SQL execution:
 select 1 as n
@@ -320,7 +320,7 @@ EOS
 	return;
     }
 
-    if ($vim::untemplatep) {
+    if ($spen::untemplatep) {
 	# get lines before current point to 'untemplate'
 	my $pretext = join "\n", $::curbuf->Get(0 .. $row-1);
 	$pretext =~ s/^=(?:sqlm?|perl)\b.*?(?:(?:^=cut *\n)|\Z)//sigm; # do not untemplste =sql/=perl ... =cut
@@ -464,7 +464,7 @@ EOS
             ($perlshowcode ? "{code}\n": '');
         if ($@) {$res.="ERROR: [$@]\n"}
         my $elapsed = Time::HiRes::tv_interval($t0, [Time::HiRes::gettimeofday()]);
-        $res .= "{anchor:perl_xxx_$elapsed}\n" if $vim::anchorp;
+        $res .= "{anchor:perl_xxx_$elapsed}\n" if $spen::anchorp;
     } elsif (substr($cmd1,0,1) eq '#') {
 	# do nothing. TODO: document this!
     } elsif ($ifsqlselect || $cmd1=~/^(?:explain\s*)?(select|show|with|values)/i) {
@@ -489,7 +489,7 @@ EOS
             $sth->execute() or die "can't execute [$cmd2]: " . $sth->errstr();
             my @names = @{$sth->{NAME} || []};
             my $aref = ($dbh->errstr?[]:$sth->fetchall_arrayref()) or die "can't fetchall [$cmd2]: " . $sth->errstr();
-            __vypcol(\@names,$aref) if $vim::ignore_cols;
+            __vypcol(\@names,$aref) if $spen::ignore_cols;
             if ($format eq '+') {
 		# TODO: use Term::Table
                 my @w = map {
@@ -498,7 +498,7 @@ EOS
                     } 0 .. $#names;
                 my @w0 = @w;
                 my $tot = $#w+1 + List::Util::sum @w;
-                if ($tot > $vim::width and !$vim::ignore_cols) {
+                if ($tot > $spen::width and !$spen::ignore_cols) {
                     __vypcol(\@names,$aref); # тогда выпиливаем даже если был флаг не выпиливать
                     # ...и пересчитать ширину
                     @w = map {
@@ -506,7 +506,7 @@ EOS
                             List::Util::max 1+0*length($names[$c]), map {length($aref->[$_]->[$c])} 0 .. $#$aref
                         } 0 .. $#names;
                     $tot = $#w+1 + List::Util::sum @w;
-                    my $wrap_factor = $tot/($vim::width-$#w+2);
+                    my $wrap_factor = $tot/($spen::width-$#w+2);
                     @w0 = map { POSIX::floor($_/$wrap_factor) || 1} @w;
                 }
                 my $tot0 = $#w+1 + List::Util::sum @w0;
@@ -529,18 +529,18 @@ EOS
                                 # line № $line in title row
                                 sprintf "%$w0[$_].$w0[$_]s", substr($names[$_],$line*$w0[$_])
                             } 0 .. $#w) . "$bar\n"
-                        } 0 .. List::Util::min List::Util::max (0, map {int(length($names[$_]) / $w0[$_])-1} 0 .. $#w), $vim::title_rows
+                        } 0 .. List::Util::min List::Util::max (0, map {int(length($names[$_]) / $w0[$_])-1} 0 .. $#w), $spen::title_rows
                     ) .
                     $capm .    #├─┤
                     # lines themselves, with wrapping
                     join ("", map {
                       my $a=$_;
-                      if ($tot > $vim::width) {
+                      if ($tot > $spen::width) {
                           # wraping factor
                           # ideally we should consider field types, should allocate some space to numbers and remaining
 			  # should be spread proportionally
                           # here - simplified way
-                          # distribute proportionally to maximal width to the width $vim::width-$#w+2
+                          # distribute proportionally to maximal width to the width $spen::width-$#w+2
                           #
                           my @writeto;
                           # write string $str width $width into scalar $writeto starting from $pos
@@ -583,7 +583,7 @@ EOS
                 );
             }
             $res .= "\$DBI::errstr=$DBI::errstr" if $DBI::errstr;
-            if ($format eq 'h' and $vim::html_save_to) {open my $fh,">$vim::html_save_to";print $fh $res}
+            if ($format eq 'h' and $spen::html_save_to) {open my $fh,">$spen::html_save_to";print $fh $res}
             if ($sqlname) {
                 $sqlname = "#$::sqlcnt" if $sqlname eq '#';
                 $::res{$sqlname} = $res;
@@ -593,19 +593,19 @@ EOS
                 # name not specified - then generate name, so to allow for easier navigation (TODO - document this technique)
                 $sqlname = ($ifsql1 ? '17' : 't') . '_' . join('_',@names) =~s/\W+//gr;
                 my $elapsed = Time::HiRes::tv_interval($t0, [Time::HiRes::gettimeofday()]);
-                $res .= "{anchor:${sqlname}_$elapsed}\n" if $vim::anchorp; # - for jira. TODO for other formats
+                $res .= "{anchor:${sqlname}_$elapsed}\n" if $spen::anchorp; # - for jira. TODO for other formats
                 $::r{$sqlname} = 1; # TODO - cleanup
             }
         }
     } else {
         my $sql = $cmd1; # otherwise we should do ENCODING=>'UTF8' on Text::Template
-        my $ret = "$vim::mariadb [".$dbh->do($sql) .
+        my $ret = "$spen::mariadb [".$dbh->do($sql) .
 		($lid ? " id=".($::id{$lid} = $dbh->last_insert_id(undef,undef,undef,undef)):"")."]> _" .
                 ($DBI::errstr ? "\$DBI::errstr=$DBI::errstr": "");
         $res = ($jira_syntax?"{code:none}\n":"") . $ret . ($jira_syntax?"\n{code}":"");
     }
     my $dr=0;
-    $vim::elapsed = Time::HiRes::tv_interval($t0, [Time::HiRes::gettimeofday()]);
+    $spen::elapsed = Time::HiRes::tv_interval($t0, [Time::HiRes::gettimeofday()]);
     for (split /\n/, $res) { # appends a line(s)
         $::curbuf->Append($x1+$dr++, $_);
     }
@@ -616,7 +616,7 @@ EOS
     $::curwin->Cursor($row0,$col);
 
     #VIM::DoCommand("redraw");
-    VIM::Msg("done ($vim::elapsed) $cmd1", "Comment");
+    VIM::Msg("done ($spen::elapsed) $cmd1", "Comment");
 }
 
 

@@ -4,15 +4,16 @@ map <F9> <Esc>:perl execute_here()<CR>
 
 perl << EOSVIM
 # following lines will be inserted when executing on an empty line:
-$vim::initial_lines = << 'EOS'
+$spen::initial_lines = << 'EOS';
 {{{
 }}}\
-EOS
 some handy lines:
 
-undef $::dbh
-$vim::width = 160
-$vim::untemplatep = 0
-$vim::anchorp = 1
-EISVIM
+use DBI; $::dbh = DBI->connect("dbi:SQLite:dbname=try-1.sqlite","","");
+
+$spen::width = 160
+$spen::untemplatep = 0
+$spen::anchorp = 1
+EOS
+EOSVIM
 
